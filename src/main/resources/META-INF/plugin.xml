@@ -1,0 +1,59 @@
+<idea-plugin>
+    <id>com.clessira.nowdoing</id>
+    <name>NowDoing</name>
+    <vendor email="hello@nowdoing.app" url="https://nowdoing.app">Clessira</vendor>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends optional="true" config-file="nowdoing-git.xml">Git4Idea</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <statusBarWidgetFactory id="NowDoingConnection"
+                                implementation="com.clessira.nowdoing.ui.ConnectionWidgetFactory"/>
+        <statusBarWidgetFactory id="NowDoingActivity"
+                                implementation="com.clessira.nowdoing.ui.ActivityWidgetFactory"/>
+        <applicationConfigurable parentId="tools"
+                                 id="com.clessira.nowdoing.settings"
+                                 displayName="NowDoing"
+                                 instance="com.clessira.nowdoing.settings.NowDoingConfigurable"/>
+        <notificationGroup id="NowDoing" displayType="BALLOON"/>
+        <postStartupActivity implementation="com.clessira.nowdoing.app.NowDoingStartup"/>
+    </extensions>
+
+    <actions>
+        <group id="NowDoing.Menu" text="NowDoing" popup="true">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <action id="NowDoing.StartActivity"
+                    class="com.clessira.nowdoing.actions.StartActivityAction"
+                    text="Start Activity…"
+                    description="Search NowDoing activities and start tracking one"/>
+            <action id="NowDoing.TestConnection"
+                    class="com.clessira.nowdoing.actions.TestConnectionAction"
+                    text="Test Connection"
+                    description="Check whether the NowDoing app is reachable"/>
+            <action id="NowDoing.Reconnect"
+                    class="com.clessira.nowdoing.actions.ReconnectAction"
+                    text="Reconnect"
+                    description="Re-check connectivity to the NowDoing app"/>
+            <action id="NowDoing.ShowStatusMenu"
+                    class="com.clessira.nowdoing.actions.ShowStatusMenuAction"
+                    text="Show Status Menu"
+                    description="Open the NowDoing quick action menu"/>
+            <action id="NowDoing.ToggleCurrentActivity"
+                    class="com.clessira.nowdoing.actions.ToggleCurrentActivityAction"
+                    text="Toggle Current Activity in Status Bar"
+                    description="Show or hide the tracked activity in the status bar"/>
+            <action id="NowDoing.ToggleElapsedTime"
+                    class="com.clessira.nowdoing.actions.ToggleElapsedTimeAction"
+                    text="Toggle Elapsed Time in Status Bar"
+                    description="Show or hide the elapsed tracking time in the status bar"/>
+            <action id="NowDoing.OpenSettings"
+                    class="com.clessira.nowdoing.actions.OpenSettingsAction"
+                    text="Open Settings"
+                    description="Open the NowDoing plugin settings"/>
+            <action id="NowDoing.ShowLog"
+                    class="com.clessira.nowdoing.actions.ShowLogAction"
+                    text="Show Log"
+                    description="Reveal the IDE log with NowDoing diagnostics"/>
+        </group>
+    </actions>
+</idea-plugin>
