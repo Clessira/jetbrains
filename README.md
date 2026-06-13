@@ -1,26 +1,26 @@
-<h1 align="center">NowDoing for JetBrains IDEs</h1>
+<h1 align="center">Clessira for JetBrains IDEs</h1>
 
 <p align="center">
   <a href="https://github.com/Clessira/jetbrains/releases/latest"><img alt="GitHub release" src="https://img.shields.io/github/v/release/Clessira/jetbrains?label=release" /></a>
   <a href="https://github.com/Clessira/jetbrains/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Clessira/jetbrains/actions/workflows/ci.yml/badge.svg?branch=main" /></a>
-  <a href="https://nowdoing.app"><img alt="Website" src="https://img.shields.io/badge/website-nowdoing.app-1F1F23" /></a>
+  <a href="https://clessira.app"><img alt="Website" src="https://img.shields.io/badge/website-clessira.app-1F1F23" /></a>
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
 </p>
 
-Notifies the [NowDoing](https://nowdoing.app) macOS app when you switch Git
+Notifies the [Clessira](https://clessira.app) macOS app when you switch Git
 branches in IntelliJ IDEA, WebStorm, PyCharm or any other JetBrains IDE, so
-NowDoing can pop up its time-entry prompt. You can also start activities
+Clessira can pop up its time-entry prompt. You can also start activities
 directly from the IDE.
 
-Requires the NowDoing macOS app with the editor integration enabled. The
+Requires the Clessira macOS app with the editor integration enabled. The
 plugin talks to a Unix-domain socket inside the app's sandbox container and
 never sends data over the network. On Windows and Linux the plugin is a no-op.
 
 ## Features
 
 - Branch-aware prompts. Switching branches in any open repository triggers a
-  NowDoing prompt, debounced to avoid spam during rebases.
-- Start activities via the `NowDoing: Start Activity…` action (Tools menu or
+  Clessira prompt, debounced to avoid spam during rebases.
+- Start activities via the `Clessira: Start Activity…` action (Tools menu or
   Find Action) with type-ahead search and create-if-missing.
 - Live status-bar readout of the currently tracked activity and elapsed time
   (visibility is controlled via settings).
@@ -28,13 +28,13 @@ never sends data over the network. On Windows and Linux the plugin is a no-op.
   connection widget opens an action menu (track, test, reconnect, settings,
   logs).
 - No network port. All traffic goes through a Unix-domain socket inside the
-  NowDoing sandbox container and is signed with HMAC plus timestamp and nonce.
+  Clessira sandbox container and is signed with HMAC plus timestamp and nonce.
 
 ## How it works
 
 The plugin listens to the IDE's Git integration (git4idea) for branch
 changes. After a short debounce window (default 1.5 s) it `POST`s to a local
-Unix-domain socket inside the NowDoing app's sandbox container:
+Unix-domain socket inside the Clessira app's sandbox container:
 
 ```http
 POST /branch-changed                       (via UDS, no TCP)
@@ -44,11 +44,11 @@ X-Clessira-Nonce: <random-hex>
 X-Clessira-Signature: <hmac-sha256>
 Content-Type: application/json
 
-{"repo": "NowDoing", "repoPath": "/Users/me/dev/NowDoing",
+{"repo": "Clessira", "repoPath": "/Users/me/dev/Clessira",
  "branch": "feat/auth", "previousBranch": "main"}
 ```
 
-NowDoing opens its prompt popover with the new branch name. A separate
+Clessira opens its prompt popover with the new branch name. A separate
 `GET /healthcheck` endpoint is used for reachability checks and never
 triggers a prompt.
 
@@ -58,19 +58,19 @@ with the socket path and auth token; the plugin re-reads it on every request.
 
 ## Installation
 
-1. In the NowDoing macOS app, open Settings and enable the editor (VS Code)
+1. In the Clessira macOS app, open Settings and enable the editor (VS Code)
    integration — this starts the local socket the plugin connects to.
 2. Install the plugin:
-   - from JetBrains Marketplace (search for "NowDoing"), or
+   - from JetBrains Marketplace (search for "Clessira"), or
    - from a [GitHub release](https://github.com/Clessira/jetbrains/releases):
      Settings | Plugins | ⚙ | Install Plugin from Disk… and pick the zip.
-3. The status bar shows `✓ NowDoing` once the app is reachable.
+3. The status bar shows `✓ Clessira` once the app is reachable.
 
 Requires a 2024.2+ JetBrains IDE.
 
 ## Settings
 
-Settings | Tools | NowDoing — the keys mirror the VS Code extension:
+Settings | Tools | Clessira — the keys mirror the VS Code extension:
 
 | Setting | Default | Description |
 | --- | --- | --- |

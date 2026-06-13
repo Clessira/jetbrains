@@ -42,15 +42,15 @@ kotlin {
 
 intellijPlatform {
     pluginConfiguration {
-        id = "com.clessira.nowdoing"
-        name = "NowDoing"
+        id = "com.clessira.jetbrains"
+        name = "Clessira"
         version = providers.gradleProperty("pluginVersion").get()
         description = """
-            Connects JetBrains IDEs to the NowDoing macOS menu bar time tracker.
-            Notifies NowDoing when you switch Git branches so it can prompt for a
+            Connects JetBrains IDEs to the Clessira macOS menu bar time tracker.
+            Notifies Clessira when you switch Git branches so it can prompt for a
             time entry, lets you search and start activities from the IDE, and
             shows the currently tracked activity with elapsed time in the status
-            bar. Requires the NowDoing app for macOS with the editor integration
+            bar. Requires the Clessira app for macOS with the editor integration
             enabled; the plugin is a no-op on other operating systems.
         """.trimIndent()
         ideaVersion {
@@ -59,8 +59,8 @@ intellijPlatform {
         }
         vendor {
             name = "Clessira"
-            email = "hello@nowdoing.app"
-            url = "https://nowdoing.app"
+            email = "hello@clessira.app"
+            url = "https://clessira.app"
         }
     }
     pluginVerification {

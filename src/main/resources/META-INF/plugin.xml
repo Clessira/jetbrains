@@ -1,59 +1,59 @@
 <idea-plugin>
-    <id>com.clessira.nowdoing</id>
-    <name>NowDoing</name>
-    <vendor email="hello@nowdoing.app" url="https://nowdoing.app">Clessira</vendor>
+    <id>com.clessira.jetbrains</id>
+    <name>Clessira</name>
+    <vendor email="hello@clessira.app" url="https://clessira.app">Clessira</vendor>
 
     <depends>com.intellij.modules.platform</depends>
-    <depends optional="true" config-file="nowdoing-git.xml">Git4Idea</depends>
+    <depends optional="true" config-file="clessira-git.xml">Git4Idea</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <statusBarWidgetFactory id="NowDoingConnection"
-                                implementation="com.clessira.nowdoing.ui.ConnectionWidgetFactory"/>
-        <statusBarWidgetFactory id="NowDoingActivity"
-                                implementation="com.clessira.nowdoing.ui.ActivityWidgetFactory"/>
+        <statusBarWidgetFactory id="ClessiraConnection"
+                                implementation="com.clessira.jetbrains.ui.ConnectionWidgetFactory"/>
+        <statusBarWidgetFactory id="ClessiraActivity"
+                                implementation="com.clessira.jetbrains.ui.ActivityWidgetFactory"/>
         <applicationConfigurable parentId="tools"
-                                 id="com.clessira.nowdoing.settings"
-                                 displayName="NowDoing"
-                                 instance="com.clessira.nowdoing.settings.NowDoingConfigurable"/>
-        <notificationGroup id="NowDoing" displayType="BALLOON"/>
-        <postStartupActivity implementation="com.clessira.nowdoing.app.NowDoingStartup"/>
+                                 id="com.clessira.jetbrains.settings"
+                                 displayName="Clessira"
+                                 instance="com.clessira.jetbrains.settings.ClessiraConfigurable"/>
+        <notificationGroup id="Clessira" displayType="BALLOON"/>
+        <postStartupActivity implementation="com.clessira.jetbrains.app.ClessiraStartup"/>
     </extensions>
 
     <actions>
-        <group id="NowDoing.Menu" text="NowDoing" popup="true">
+        <group id="Clessira.Menu" text="Clessira" popup="true">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
-            <action id="NowDoing.StartActivity"
-                    class="com.clessira.nowdoing.actions.StartActivityAction"
+            <action id="Clessira.StartActivity"
+                    class="com.clessira.jetbrains.actions.StartActivityAction"
                     text="Start Activity…"
-                    description="Search NowDoing activities and start tracking one"/>
-            <action id="NowDoing.TestConnection"
-                    class="com.clessira.nowdoing.actions.TestConnectionAction"
+                    description="Search Clessira activities and start tracking one"/>
+            <action id="Clessira.TestConnection"
+                    class="com.clessira.jetbrains.actions.TestConnectionAction"
                     text="Test Connection"
-                    description="Check whether the NowDoing app is reachable"/>
-            <action id="NowDoing.Reconnect"
-                    class="com.clessira.nowdoing.actions.ReconnectAction"
+                    description="Check whether the Clessira app is reachable"/>
+            <action id="Clessira.Reconnect"
+                    class="com.clessira.jetbrains.actions.ReconnectAction"
                     text="Reconnect"
-                    description="Re-check connectivity to the NowDoing app"/>
-            <action id="NowDoing.ShowStatusMenu"
-                    class="com.clessira.nowdoing.actions.ShowStatusMenuAction"
+                    description="Re-check connectivity to the Clessira app"/>
+            <action id="Clessira.ShowStatusMenu"
+                    class="com.clessira.jetbrains.actions.ShowStatusMenuAction"
                     text="Show Status Menu"
-                    description="Open the NowDoing quick action menu"/>
-            <action id="NowDoing.ToggleCurrentActivity"
-                    class="com.clessira.nowdoing.actions.ToggleCurrentActivityAction"
+                    description="Open the Clessira quick action menu"/>
+            <action id="Clessira.ToggleCurrentActivity"
+                    class="com.clessira.jetbrains.actions.ToggleCurrentActivityAction"
                     text="Toggle Current Activity in Status Bar"
                     description="Show or hide the tracked activity in the status bar"/>
-            <action id="NowDoing.ToggleElapsedTime"
-                    class="com.clessira.nowdoing.actions.ToggleElapsedTimeAction"
+            <action id="Clessira.ToggleElapsedTime"
+                    class="com.clessira.jetbrains.actions.ToggleElapsedTimeAction"
                     text="Toggle Elapsed Time in Status Bar"
                     description="Show or hide the elapsed tracking time in the status bar"/>
-            <action id="NowDoing.OpenSettings"
-                    class="com.clessira.nowdoing.actions.OpenSettingsAction"
+            <action id="Clessira.OpenSettings"
+                    class="com.clessira.jetbrains.actions.OpenSettingsAction"
                     text="Open Settings"
-                    description="Open the NowDoing plugin settings"/>
-            <action id="NowDoing.ShowLog"
-                    class="com.clessira.nowdoing.actions.ShowLogAction"
+                    description="Open the Clessira plugin settings"/>
+            <action id="Clessira.ShowLog"
+                    class="com.clessira.jetbrains.actions.ShowLogAction"
                     text="Show Log"
-                    description="Reveal the IDE log with NowDoing diagnostics"/>
+                    description="Reveal the IDE log with Clessira diagnostics"/>
         </group>
     </actions>
 </idea-plugin>

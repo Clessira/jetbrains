@@ -61,7 +61,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: nowdoing-jetbrains-${{ steps.version.outputs.version }}
+          name: clessira-jetbrains-${{ steps.version.outputs.version }}
           path: build/distributions/*.zip
           if-no-files-found: error
 
@@ -81,7 +81,7 @@ jobs:
         run: |
           TAG="${{ steps.version.outputs.tag }}"
           gh release create "$TAG" \
-            build/distributions/nowdoing-jetbrains-${{ steps.version.outputs.version }}.zip \
+            build/distributions/clessira-jetbrains-${{ steps.version.outputs.version }}.zip \
             --title "$TAG" \
             --notes-file release-notes.md
 

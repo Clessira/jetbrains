@@ -1,4 +1,4 @@
-# Agent notes — NowDoing JetBrains plugin
+# Agent notes — Clessira JetBrains plugin
 
 Kotlin / IntelliJ Platform Gradle Plugin 2.x project. JVM toolchain 21,
 since-build 242 (2024.2+). No bundled runtime dependencies — Gson, the Kotlin
@@ -33,7 +33,7 @@ The wire contract (canonical string `METHOD\nPATH\nTS\nNONCE\nBODYHASH`,
 The behavioral source of truth for this plugin is the VS Code extension
 (`Clessira/vscode`, `src/extension.ts`) — when the protocol or feature set
 changes there, mirror it here and keep `AuthTest`'s golden vectors plus
-`ProtocolTest` in lockstep. In the NowDoing superproject, the
+`ProtocolTest` in lockstep. In the Clessira superproject, the
 `wire-protocol-change` skill drives that propagation.
 
 ## Behavior parity notes

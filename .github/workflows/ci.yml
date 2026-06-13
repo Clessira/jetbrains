@@ -28,6 +28,6 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: nowdoing-jetbrains
+          name: clessira-jetbrains
           path: build/distributions/*.zip
           if-no-files-found: error

@@ -1,0 +1,13 @@
+<idea-plugin>
+    <!-- Loaded only when the bundled Git plugin (Git4Idea) is enabled. -->
+    <extensions defaultExtensionNs="com.intellij">
+        <postStartupActivity implementation="com.clessira.jetbrains.git.RepoWatchStartup"/>
+    </extensions>
+
+    <projectListeners>
+        <listener class="com.clessira.jetbrains.git.GitRepoListener"
+                  topic="git4idea.repo.GitRepositoryChangeListener"/>
+        <listener class="com.clessira.jetbrains.git.GitMappingListener"
+                  topic="com.intellij.dvcs.repo.VcsRepositoryMappingListener"/>
+    </projectListeners>
+</idea-plugin>
