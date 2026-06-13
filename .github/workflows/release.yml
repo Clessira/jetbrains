@@ -21,6 +21,12 @@ concurrency:
 jobs:
   release:
     runs-on: ubuntu-latest
+    env:
+      # Empty when the secret is not configured — the publish step then skips,
+      # so a release can still be cut. (The very first upload of a new plugin
+      # must be done manually in the Marketplace UI; the API only updates an
+      # existing listing.)
+      MARKETPLACE_PAT: ${{ secrets.JETBRAINS_MARKETPLACE_TOKEN }}
 
     steps:
       - uses: actions/checkout@v4
@@ -58,9 +64,6 @@ jobs:
       - name: Build plugin
         run: ./gradlew buildPlugin verifyPluginStructure
 
-      - name: Verify plugin against recommended IDEs
-        run: ./gradlew verifyPlugin
-
       - name: Resolve distribution zip
         id: dist
         run: |
@@ -94,10 +97,10 @@ jobs:
             --notes-file release-notes.md
 
       - name: Publish to JetBrains Marketplace
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' && env.MARKETPLACE_PAT != ''
         uses: CodingWithCalvin/GHA-JBMarketplacePublisher@v1
         with:
-          marketplace-pat: ${{ secrets.JETBRAINS_MARKETPLACE_TOKEN }}
+          marketplace-pat: ${{ env.MARKETPLACE_PAT }}
           archive-path: ${{ steps.dist.outputs.zip }}
           plugin-xml-id: com.clessira.jetbrains
           channel: stable

@@ -60,6 +60,10 @@ class FakeUdsServer(
     /** Closes the listener but leaves the socket file behind (ECONNREFUSED tests). */
     fun closeListenerKeepingSocketFile() {
         runCatching { server.close() }
+        // Wait for the accept loop to actually exit. Otherwise a connect that
+        // races the close can still be accepted and served, which is what made
+        // the "stale socket file" test flaky on the Linux CI runner.
+        runCatching { acceptThread.join(2000) }
     }
 
     private fun acceptLoop() {
