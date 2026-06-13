@@ -182,7 +182,10 @@ object ActivityPickerPopup {
         search.addDocumentListener(object : DocumentListener {
             private fun changed() {
                 debounceJob?.cancel()
-                debounceJob = app.scope.launch {
+                // Stay on the EDT: `requestVersion`/`busy` are the stale-response
+                // guard and `search.text` is a Swing read, so both must be touched
+                // only on the EDT (updateItems forks to IO for the network call).
+                debounceJob = app.scope.launch(Dispatchers.EDT) {
                     delay(SEARCH_DEBOUNCE_MS)
                     updateItems(search.text)
                 }

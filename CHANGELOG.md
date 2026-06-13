@@ -2,6 +2,20 @@
 
 All notable changes to the Clessira JetBrains plugin are documented here.
 
+## 0.1.1 - 2026-06-13
+
+### Changed
+
+- Release pipeline: tag-driven semantic versioning — push `vX.Y.Z` and the
+  version is injected into the build, a GitHub Release is cut, and the plugin
+  is published to the JetBrains Marketplace via GitHub Actions.
+
+### Fixed
+
+- Activity picker: run the search debounce on the EDT so the stale-response
+  guard (`requestVersion`/`busy`) and the `search.text` read are no longer
+  touched from a background thread (`ActivityPickerPopup`).
+
 ## 0.1.0 - 2026-06-12
 
 ### Added

@@ -7,7 +7,14 @@ plugins {
 }
 
 group = "com.clessira"
-version = providers.gradleProperty("pluginVersion").get()
+
+// Single source of truth for the published version. CI sets PLUGIN_VERSION from
+// the pushed `vX.Y.Z` git tag (semantic versioning); local/dev builds fall back
+// to `pluginVersion` in gradle.properties.
+val pluginVersion = providers.environmentVariable("PLUGIN_VERSION")
+    .orElse(providers.gradleProperty("pluginVersion"))
+
+version = pluginVersion.get()
 
 repositories {
     mavenCentral()
@@ -44,7 +51,7 @@ intellijPlatform {
     pluginConfiguration {
         id = "com.clessira.jetbrains"
         name = "Clessira"
-        version = providers.gradleProperty("pluginVersion").get()
+        version = pluginVersion.get()
         description = """
             Connects JetBrains IDEs to the Clessira macOS menu bar time tracker.
             Notifies Clessira when you switch Git branches so it can prompt for a

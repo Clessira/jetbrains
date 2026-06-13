@@ -1,24 +1,26 @@
 name: Release
 
+# Semantic-versioned releases are tag-driven: push an annotated tag `vX.Y.Z`
+# (optionally `vX.Y.Z-beta.1`) and this workflow builds, verifies, cuts a
+# GitHub Release and publishes to the JetBrains Marketplace. A manual
+# `workflow_dispatch` run is a no-publish dry build for sanity-checking.
 on:
-  workflow_dispatch:
-    inputs:
-      dry_run:
-        description: "Build and package only. Skip tag and GitHub Release."
-        type: boolean
-        default: false
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+      - "v[0-9]+.[0-9]+.[0-9]+-*"
+  workflow_dispatch: {}
 
 permissions:
   contents: write
 
 concurrency:
-  group: release
+  group: release-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
   release:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
 
     steps:
       - uses: actions/checkout@v4
@@ -32,32 +34,40 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
+      - name: Resolve version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            VERSION="${GITHUB_REF_NAME#v}"
+          else
+            # Manual dry build — derive a throwaway dev version from the SHA.
+            VERSION="0.0.0-dev.${GITHUB_SHA::7}"
+          fi
+          if ! printf '%s' "$VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
+            echo "::error::'$VERSION' is not a semantic version (expected X.Y.Z[-suffix])."
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+          echo "PLUGIN_VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "Resolved version: $VERSION (event: ${{ github.event_name }})"
+
       - name: Test
         run: ./gradlew test
 
       - name: Build plugin
         run: ./gradlew buildPlugin verifyPluginStructure
 
-      - name: Read version
-        id: version
-        run: |
-          VERSION=$(grep '^pluginVersion=' gradle.properties | cut -d= -f2)
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
-          echo "Building version $VERSION"
+      - name: Verify plugin against recommended IDEs
+        run: ./gradlew verifyPlugin
 
-      - name: Read release notes from changelog
+      - name: Resolve distribution zip
+        id: dist
         run: |
-          bash scripts/release-notes.sh "${{ steps.version.outputs.version }}" > release-notes.md
-          test -s release-notes.md
-
-      - name: Ensure tag does not already exist
-        run: |
-          TAG="${{ steps.version.outputs.tag }}"
-          if git rev-parse "$TAG" >/dev/null 2>&1; then
-            echo "::error::Tag $TAG already exists. Bump pluginVersion in gradle.properties before releasing."
-            exit 1
-          fi
+          ZIP=$(ls build/distributions/*.zip | head -n1)
+          test -n "$ZIP"
+          echo "zip=$ZIP" >> "$GITHUB_OUTPUT"
+          echo "Built $ZIP"
 
       - uses: actions/upload-artifact@v4
         with:
@@ -65,26 +75,29 @@ jobs:
           path: build/distributions/*.zip
           if-no-files-found: error
 
-      - name: Tag release
-        if: ${{ !inputs.dry_run }}
+      # --- Everything below runs only for a tag push (a real release) ---------
+
+      - name: Read release notes from changelog
+        if: github.event_name == 'push'
         run: |
-          TAG="${{ steps.version.outputs.tag }}"
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag -a "$TAG" -m "Release $TAG"
-          git push origin "$TAG"
+          bash scripts/release-notes.sh "${{ steps.version.outputs.version }}" > release-notes.md
+          test -s release-notes.md
 
       - name: Create GitHub Release
-        if: ${{ !inputs.dry_run }}
+        if: github.event_name == 'push'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          TAG="${{ steps.version.outputs.tag }}"
-          gh release create "$TAG" \
-            build/distributions/clessira-jetbrains-${{ steps.version.outputs.version }}.zip \
-            --title "$TAG" \
+          gh release create "${{ steps.version.outputs.tag }}" \
+            "${{ steps.dist.outputs.zip }}" \
+            --title "${{ steps.version.outputs.tag }}" \
             --notes-file release-notes.md
 
-      # Marketplace publishing (./gradlew publishPlugin) is intentionally not
-      # wired yet — it needs a JETBRAINS_MARKETPLACE_TOKEN secret and a
-      # published plugin listing. Add a publish step here once both exist.
+      - name: Publish to JetBrains Marketplace
+        if: github.event_name == 'push'
+        uses: CodingWithCalvin/GHA-JBMarketplacePublisher@v1
+        with:
+          marketplace-pat: ${{ secrets.JETBRAINS_MARKETPLACE_TOKEN }}
+          archive-path: ${{ steps.dist.outputs.zip }}
+          plugin-xml-id: com.clessira.jetbrains
+          channel: stable

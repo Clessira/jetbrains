@@ -10,8 +10,9 @@ import com.intellij.openapi.components.service
 import com.intellij.util.messages.Topic
 
 /**
- * Application-level settings, mirroring the VS Code extension's
- * `clessira.*` configuration keys (same names, defaults and ranges).
+ * Application-level settings, mirroring the VS Code extension's `nowdoing.*`
+ * configuration (same field names and defaults; stored independently per IDE,
+ * so the section prefix is irrelevant here).
  */
 @Service(Service.Level.APP)
 @State(
@@ -39,6 +40,8 @@ class ClessiraSettings : PersistentStateComponent<ClessiraSettings.State> {
         this.state = state
     }
 
+    // Stricter than VS Code (which only floors poll at 2): the upper bounds
+    // match the settings-UI ranges and guard against out-of-range stored values.
     val debounceMsClamped: Long get() = state.debounceMs.coerceIn(0, 10_000).toLong()
     val currentPollSecondsClamped: Int get() = state.currentPollSeconds.coerceIn(2, 120)
 
