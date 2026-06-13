@@ -73,3 +73,11 @@ intellijPlatform {
 tasks.test {
     useJUnitPlatform()
 }
+
+// IntelliJ Platform Gradle Plugin 2.x no longer wires buildPlugin into the
+// build lifecycle, so a plain `./gradlew build` produces only the jars under
+// build/libs. Re-attach it so the installable distribution zip in
+// build/distributions is always produced as part of `build`/`assemble`.
+tasks.assemble {
+    dependsOn(tasks.buildPlugin)
+}
